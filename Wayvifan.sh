@@ -4,7 +4,7 @@
 
 # For each tuple, the left number is the temp the GPU has to reach
 # for the right number to become its fan speed
-# I personnally use config='0,30 65,40 75,50 85,60 95,70'
+# I personally use config='0,30 65,40 75,50 85,60 95,70'
 # It means my fans are at 30% at idle/low usage (< 65°C) and mostly at
 # 40% (65°C <= t < 75°C) or eventually 50% (75°C <= t < 85°C) speed when gaming
 config='0,30 65,40 75,50 85,60 95,70'
@@ -19,7 +19,7 @@ wait=1
 delay=30
 
 # A wait of 1 with a delay of 30 means your GPU fan speed will only
-# go down if its temp has lowered enough for 30 (1*30) seconds straigt
+# go down if its temp has lowered enough for 30 (1*30) seconds straight
 
 
 # Unless you know what you're doing, don't touch anything below
@@ -28,6 +28,9 @@ iterations=0 # The number of iterations since the last increase
 current_speed=$(nvidia-settings -tq GPUTargetFanSpeed | cut -d $'\n' -f 1)
 just_got_up=false # Remembers if the last change was an increase
 
+
+# If not already given, ask for root permission
+[ "$UID" == 0 ] || exec sudo "$0" "$@"
 
 while :
 do
@@ -63,7 +66,7 @@ do
                         just_got_up=false
                     fi
                 fi
-            # If current speed is too low, increase it immediatly
+            # If current speed is too low, increase it immediately
             else
                 echo "Fan speed increase"
                 just_got_up=true
