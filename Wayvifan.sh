@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Configure the following to your liking
 
@@ -25,37 +25,37 @@ delay=30
 # Unless you know what you're doing, don't touch anything below
 
 iterations=0 # The number of iterations since the last increase
-current_speed=$(nvidia-settings -tq GPUTargetFanSpeed | cut -d $'\n' -f 1)
+current_speed=$(nvidia-settings -tq GPUTargetFanSpeed | head -n 1)
 just_got_up=false # Remembers if the last change was an increase
 
 
 # If not already given, ask for root permission
-[ "$UID" == 0 ] || exec sudo "$0" "$@"
+[ "$(id -u)" -eq 0 ] || exec sudo "$0" "$@"
 
 while :
 do
     temp=$(nvidia-settings -tq GPUCoreTemp) # Current temp
-    for elem in $(echo $config | tac -s ' ')
+    for elem in $(echo "$config" | tac -s ' ')
     do
-        t=$(echo $elem | cut -d ',' -f 1) # Left number (temp)
-        s=$(echo $elem | cut -d ',' -f 2) # Right number (speed)
+        t=$(echo "$elem" | cut -d ',' -f 1) # Left number (temp)
+        s=$(echo "$elem" | cut -d ',' -f 2) # Right number (speed)
         # If the GPU temp is higher or equal to the current tuple left number
-        if (($temp >= $t))
+        if [ "$temp" -ge "$t" ]
         then
             # If the current speed is already the one
-            if (($current_speed == $s))
+            if [ "$current_speed" = "$s" ]
             then
                 iterations=0
                 break
             # If the current speed is higher then the appropriate one
-            elif (($current_speed > $s))
+            elif [ "$current_speed" -gt "$s" ]
             then
                 # If the last speed change was an increase
-                if ((just_got_up == true))
+                if [ "$just_got_up" = true ]
                 then
                     # If the speed has been too high since less than $delay iterations
                     # Meaning the GPU could potentially go above again shortly
-                    if ((iterations <= $delay))
+                    if [ "$iterations" -le "$delay" ]
                     then
                         iterations=$((iterations + 1))
                         break
@@ -73,7 +73,7 @@ do
                 iterations=0
             fi
             # Sets the speed to the current tuple right number
-            nvidia-settings -a GPUTargetFanSpeed=$s
+            nvidia-settings -a GPUTargetFanSpeed="$s"
             current_speed=$s
             break # Breaks the for loop when the correct speed is set
         fi
