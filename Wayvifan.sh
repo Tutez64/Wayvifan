@@ -121,6 +121,9 @@ do
                         info "Fan speed decrease from $current_speed to $s"
                         just_got_up=false
                     fi
+                # If the last change was a decrease and it's still too high
+                else
+                	info "Fan speed decrease from $current_speed to $s"
                 fi
             # If current speed is too low, increase it immediately
             else
