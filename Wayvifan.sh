@@ -21,6 +21,12 @@ delay=30
 # A wait of 1 with a delay of 30 means your GPU fan speed will only
 # go down if its temp has lowered enough for 30 (1*30) seconds straight
 
+# 0 means no log, 5 means all logs (FATAL, ERROR, WARN, INFO and DEBUG).
+# If, for example, you only want FATAL and ERROR types of logs, put 2
+log_lvl=4
+
+# Makes the logs colored according to their importance
+colored=true
 
 # Unless you know what you're doing, don't touch anything below
 
@@ -31,6 +37,56 @@ just_got_up=false # Remembers if the last change was an increase
 
 # If not already given, ask for root permission
 [ "$(id -u)" -eq 0 ] || exec sudo "$0" "$@"
+
+NC="\033[0m"
+log() {
+	type="$1"
+	color="$2"
+	message="$3"
+	current_time=$(date "+%Y/%m/%d %H:%M:%S")
+	if [ $colored = true ]
+	then
+		echo "${color}[$current_time]" "[$type]" "$message""${NC}"
+	else
+		echo "[$current_time]" "[$type]" "$message"
+	fi
+}
+
+debug() {
+	if [ $log_lvl -ge 5 ]
+	then
+  		log DEBUG '\033[0;96m' "$1"
+  	fi
+}
+
+info() {
+	if [ $log_lvl -ge 4 ]
+	then
+  		log INFO '\033[0;32m' "$1"
+  	fi
+}
+
+warn() {
+	if [ $log_lvl -ge 3 ]
+	then
+  		log WARN '\033[0;33m' "$1"
+  	fi
+}
+
+error() {
+	if [ $log_lvl -ge 2 ]
+	then
+  		log ERROR '\033[0;91m' "$1"
+  	fi
+}
+
+fatal() {
+	if [ $log_lvl -ge 1 ]
+	then
+  		log FATAL '\033[41;30m' "$1"
+  	fi
+}
+
 
 while :
 do
@@ -62,18 +118,18 @@ do
                     # If it's been at least $delay iterations since the speed has been too high
                     # Meaning the GPU likely won't go to the upper level just now
                     else
-                        echo "Fan speed decrease"
+                        info "Fan speed decrease from $current_speed to $s"
                         just_got_up=false
                     fi
                 fi
             # If current speed is too low, increase it immediately
             else
-                echo "Fan speed increase"
+                info "Fan speed increase from $current_speed to $s"
                 just_got_up=true
                 iterations=0
             fi
             # Sets the speed to the current tuple right number
-            nvidia-settings -a GPUTargetFanSpeed="$s"
+            nvidia-settings -a GPUTargetFanSpeed="$s" > /dev/null
             current_speed=$s
             break # Breaks the for loop when the correct speed is set
         fi
