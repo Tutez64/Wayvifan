@@ -19,12 +19,14 @@ And... that's all. In fact, you don't even need Bash! If you prefer to use Dash,
 
 ## How to use it?
 
-1. The file can be downloaded [here](https://github.com/Tutez64/Wayvifan/releases/latest).
+1. Go [here](https://github.com/Tutez64/Wayvifan/releases/latest) and click on `Wayvifan.sh` to download it.
 2. Open the file with your favorite text editor and configure it to your liking.
 Explanations and present, and you only really need to modify a single line.
 3. Open a terminal and go to where the file is located. Alternatively, use your file browser to go where the file is and open a terminal from there
 4. Make the file executable with `chmod +x Wayvifan.sh`
 5. Execute with `./Wayvifan.sh`. You may need to enter your password so the script gains the right to control your GPU fan(s).
+
+Alternatively, you can download the source code and either build (*cough*) `Wayvifan.sh` by running `build.sh`, or directly run `main.sh`.
 
 ## Should I use it?
 
