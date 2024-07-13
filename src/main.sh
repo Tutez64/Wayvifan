@@ -1,7 +1,6 @@
-#!/bin/sh
+#!/usr/bin/env sh
+. ./conf.sh && . ./logs.sh
 
-. src/conf.sh
-. src/logs.sh
 
 # If not already given, ask for root permission
 [ "$(id -u)" -eq 0 ] || exec sudo "$0" "$@"
