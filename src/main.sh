@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-. ./conf.sh && . ./logs.sh
+. ./conf.sh && . ./logs.sh && . ./detections.sh
 
 
 # If not already given, ask for root permission.
@@ -9,6 +9,7 @@ check_perm() {
 
 # Main loop
 loop() (
+	info 'Starting main loop.'
 	_current_speed=$(nvidia-settings -tq GPUTargetFanSpeed | head -n 1)
 	# Iterations since the last speed increase.
 	_iterations=0
@@ -54,6 +55,7 @@ loop() (
 
 main() {
 	check_perm "$@"
+	detections || exit $?
 	loop
 }
 

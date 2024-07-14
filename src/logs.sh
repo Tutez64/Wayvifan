@@ -24,7 +24,7 @@ debug() {
 info() {
 	if [ $C_LOG_LVL -ge 4 ]
 	then
-  		log INFO '\033[0;32m' "$1"
+  		log INFO '\033[0;32m' "$*"
   	fi
 }
 
@@ -32,7 +32,7 @@ info() {
 warn() {
 	if [ $C_LOG_LVL -ge 3 ]
 	then
-  		log WARN '\033[0;33m' "$1"
+  		log WARN '\033[0;33m' "$*"
   	fi
 }
 
@@ -40,7 +40,7 @@ warn() {
 error() {
 	if [ $C_LOG_LVL -ge 2 ]
 	then
-  		log ERROR '\033[0;91m' "$1"
+  		log ERROR '\033[0;91m' "$*"
   	fi
 }
 
@@ -48,6 +48,6 @@ error() {
 fatal() {
 	if [ $C_LOG_LVL -ge 1 ]
 	then
-  		log FATAL '\033[41;30m' "$1"
+  		log FATAL '\033[41;30m' "$*"
   	fi
 }

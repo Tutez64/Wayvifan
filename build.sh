@@ -7,6 +7,8 @@
 	cat src/conf.sh
 	printf "\n\n"
 	cat src/logs.sh
+	printf "\n\n"
+	cat src/detections.sh
 	< src/main.sh tail -n+3
 } >> Wayvifan.sh
 
