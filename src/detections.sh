@@ -25,6 +25,31 @@ os_detection() {
 	readonly C_OS C_DISTRO
 }
 
+pkg_manager_detection() {
+	if [ $C_OS = 'Linux' ]; then
+		case $(cat /etc/*-release | grep -w 'ID\|ID_LIKE') in
+			*debian*)	C_PKG_MANAGER='apt';;
+			*fedora*)	C_PKG_MANAGER='dnf';;
+			*arch*)		C_PKG_MANAGER='pacman';;
+			*suse*)		C_PKG_MANAGER='zypper';;
+			*)			C_PKG_MANAGER='unknown';;
+		esac
+	elif [ $C_OS = 'BSD' ] || [ $C_OS = 'Solaris' ]; then
+		C_PKG_MANAGER='pkg'
+	else
+		debug 'Skipping package manager detection.'
+		return
+	fi
+
+	if [ $C_PKG_MANAGER != 'unknown' ]; then
+		info "Detected package manager: $C_PKG_MANAGER."
+	else
+		warn 'Package manager detection failed.'
+	fi
+
+	readonly C_PKG_MANAGER
+}
+
 gpu_detection() {
 	if command -v lspci >/dev/null 2>&1; then
 		_gpu=$(lspci | grep 'NVIDIA Corporation')
@@ -57,6 +82,7 @@ detections() {
 	info 'Starting detections.'
 
 	os_detection
+	pkg_manager_detection
 	gpu_detection
 	command_detection || return
 
