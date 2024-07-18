@@ -1,16 +1,33 @@
 #!/usr/bin/env sh
 . ./conf.sh && . ./logs.sh && . ./detections.sh
 
-
 # If not already given, ask for root permission.
 check_perm() {
 	[ "$(id -u)" -eq 0 ] || exec sudo "$0" "$@"
 }
 
+# Update the fans' speed to the passed value
+set_speed() {
+	(
+		_new_speed=$1
+
+		if [ "$_new_speed" -gt "$current_speed" ]; then
+			_update='increase'
+		else
+			_update='decrease'
+		fi
+
+		# shellcheck disable=SC2046,SC2086
+		debug $(nvidia-settings -a GPUTargetFanSpeed=$_new_speed)
+		info "Fan speed $_update from $current_speed to $_new_speed"
+		return "$_new_speed"
+	)
+	current_speed=$?
+}
+
 # Main loop
 loop() (
 	info 'Starting main loop.'
-	_current_speed=$(nvidia-settings -tq GPUTargetFanSpeed | head -n 1)
 	# Iterations since the last speed increase.
 	_iterations=0
 	# Remember if the last speed change was an increase.
@@ -23,29 +40,23 @@ loop() (
 			_temp=$(echo "$_elem" | cut -d ',' -f 1)
 			_speed=$(echo "$_elem" | cut -d ',' -f 2)
 			if [ "$current_temp" -ge "$_temp" ]; then
-				if [ "$_current_speed" = "$_speed" ]; then
+				if [ "$current_speed" = "$_speed" ]; then
 					_iterations=0
 					break
-				elif [ "$_current_speed" -gt "$_speed" ]; then
+				elif [ "$current_speed" -gt "$_speed" ]; then
 					if [ "$_just_got_up" = true ]; then
 						if [ "$_iterations" -le "$C_RQD_ITERATIONS" ]; then
 							_iterations=$((_iterations + 1))
 							break
 						else
-							info "Fan speed decrease from $_current_speed to $_speed"
 							_just_got_up=false
 						fi
-					else
-						info "Fan speed decrease from $_current_speed to $_speed"
 					fi
 				else
-					info "Fan speed increase from $_current_speed to $_speed"
 					_just_got_up=true
 					_iterations=0
 				fi
-				# shellcheck disable=SC2046,SC2086
-				debug $(nvidia-settings -a GPUTargetFanSpeed=$_speed)
-				_current_speed=$_speed
+				set_speed "$_speed"
 				break
 			fi
 		done
@@ -56,6 +67,7 @@ loop() (
 main() {
 	check_perm "$@"
 	detections || exit $?
+	current_speed=$(nvidia-settings -tq GPUTargetFanSpeed | head -n 1)
 	loop
 }
 
