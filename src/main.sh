@@ -49,7 +49,11 @@ loop() (
 				elif [ "$current_speed" -gt "$_speed" ]; then
 					if [ "$_just_got_up" = true ]; then
 						if [ "$_iterations" -le "$C_RQD_ITERATIONS" ]; then
-							_iterations=$((_iterations + 1))
+							if [ $C_ITERATIONS_IF_DELTA = false ] || [ "$current_temp" -lt $((_previous_temp - C_RQD_DELDA)) ]; then
+								_iterations=$((_iterations + 1))
+							else
+								_iterations=0
+							fi
 							break
 						else
 							if [ $C_RQD_DELDA -gt 0 ]; then

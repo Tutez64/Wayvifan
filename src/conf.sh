@@ -18,6 +18,9 @@ C_RQD_ITERATIONS=30
 # With a delta of 3 and an increase at 65°C, it may only decrease at less than 62°C
 C_RQD_DELDA=3
 
+# If enabled, the delta condition must be true for all the iterations
+C_ITERATIONS_IF_DELTA=true
+
 # How verbose the logs are, from 0 (no logs) to 5 (all logs).
 # For, let's say, FATAL and ERROR logs but not WARN, INFO and DEBUG logs: put 2.
 C_LOG_LVL=4
@@ -25,4 +28,4 @@ C_LOG_LVL=4
 # Make logs colored according to their importance.
 C_COLORED_TXT=true
 
-readonly C_CONFIG C_WAIT C_RQD_ITERATIONS C_RQD_DELDA C_LOG_LVL C_COLORED_TXT
+readonly C_CONFIG C_WAIT C_RQD_ITERATIONS C_RQD_DELDA C_ITERATIONS_IF_DELTA C_LOG_LVL C_COLORED_TXT
