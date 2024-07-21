@@ -32,9 +32,12 @@ loop() (
 	_iterations=0
 	# Remember if the last speed change was an increase.
 	_just_got_up=false
+	# Temp from previous tuple
+	_previous_temp=
 
 	while :; do
 		current_temp=$(nvidia-settings -tq GPUCoreTemp)
+		debug "current_temp: $current_temp"
 		# For each tuple in $C_CONFIG
 		for _elem in $(echo "$C_CONFIG" | tac -s ' '); do
 			_temp=$(echo "$_elem" | cut -d ',' -f 1)
@@ -49,6 +52,11 @@ loop() (
 							_iterations=$((_iterations + 1))
 							break
 						else
+							if [ $C_RQD_DELDA -gt 0 ]; then
+								if ! [ "$current_temp" -lt $((_previous_temp - C_RQD_DELDA)) ]; then
+									break
+								fi
+							fi
 							_just_got_up=false
 						fi
 					fi
@@ -58,6 +66,9 @@ loop() (
 				fi
 				set_speed "$_speed"
 				break
+			else
+				_previous_temp=$_temp
+				#debug "previous_temp: $_previous_temp"
 			fi
 		done
 		sleep $C_WAIT
