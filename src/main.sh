@@ -6,7 +6,7 @@ check_perm() {
 	[ "$(id -u)" -eq 0 ] || exec sudo "$0" "$@"
 }
 
-# Update the fans' speed to the passed value
+# Update the fans' speed to the passed value.
 set_speed() {
 	(
 		_new_speed=$1
@@ -25,20 +25,20 @@ set_speed() {
 	current_speed=$?
 }
 
-# Main loop
+# Main loop.
 loop() (
 	info 'Starting main loop.'
 	# Iterations since the last speed increase.
 	_iterations=0
 	# Remember if the last speed change was an increase.
 	_just_got_up=false
-	# Temp from previous tuple
+	# Temp from previous tuple.
 	_previous_temp=
 
 	while :; do
 		current_temp=$(nvidia-settings -tq GPUCoreTemp)
 		debug "current_temp: $current_temp"
-		# For each tuple in $C_CONFIG
+		# For each tuple in $C_CONFIG.
 		for _elem in $(echo "$C_CONFIG" | tac -s ' '); do
 			_temp=$(echo "$_elem" | cut -d ',' -f 1)
 			_speed=$(echo "$_elem" | cut -d ',' -f 2)
@@ -57,7 +57,7 @@ loop() (
 							break
 						else
 							if [ $C_RQD_DELDA -gt 0 ]; then
-								if ! [ "$current_temp" -lt $((_previous_temp - C_RQD_DELDA)) ]; then
+								if [ "$current_temp" -ge $((_previous_temp - C_RQD_DELDA)) ]; then
 									break
 								fi
 							fi

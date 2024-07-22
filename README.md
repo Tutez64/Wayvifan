@@ -7,7 +7,8 @@ It is a lightweight and easy to use script. It works on Xorg, too.
 
 It automatically changes the speed of your NVIDIA GPU fan(s), depending on the GPU temperature.\
 It is configurable and should be adapted to your environment.\
-There is a system to limit useless and repeated changes.\
+There are two systems to limit useless and repeated changes, enabled per default.\
+Logs are outputted to stdout, per default in color according to their importance.\
 For now, that is all!
 
 ## What does it need?
