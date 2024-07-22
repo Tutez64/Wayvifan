@@ -28,3 +28,21 @@ Again, many things! Including:
 - multiple GPUs support, not that it would make a huge difference;
 - AMD and Intel support, I don't even have GPUs from them;
 - automatic launch at boot. Although there are many ways to do it like with any other script, so feel free to.
+
+## Are there new features planned?
+
+I'm not really planning anything, but I have some things in mind:
+
+- AMD and Intel support;
+- automatic installation of `nvidia-settings` (WIP);
+- support for non-GPU fans;
+- support for logging to a file;
+- support for arguments;
+- for easier programming, a pseudo-GPU with unit tests.
+
+## Why use Bourne shell instead of Bash?
+
+That's a great question.\
+I first started this script using Bash, but as I discovered more about Bash, Sh, Dash etc. I decided to go with the last two.\
+The reasons are that they offer better compatibility, speed (at least Dash does), resources efficiency, and it's also more interesting and more rewarding as all the useful additions of Bash aren't present.\
+We could argue about whether Bash (or Python, or any other language) would have been a better choice or not, but Sh does offer unique advantages, and learning it definitely is interesting!
